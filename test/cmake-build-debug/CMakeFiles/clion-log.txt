@@ -1,0 +1,39 @@
+/usr/local/programms/clion-2020.1/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/nolv/Work/binary-message/test
+CMake Error: Could not find cmake module file: CMakeDeterminemessageCompiler.cmake
+CMake Error: Error required internal CMake variable not set, cmake may not be built correctly.
+Missing variable is:
+CMAKE_message_COMPILER_ENV_VAR
+CMake Error: Error required internal CMake variable not set, cmake may not be built correctly.
+Missing variable is:
+CMAKE_message_COMPILER
+CMake Error: Could not find cmake module file: /home/nolv/Work/binary-message/test/cmake-build-debug/CMakeFiles/3.17.3/CMakemessageCompiler.cmake
+CMake Error: Could not find cmake module file: CMakeDeterminetestCompiler.cmake
+CMake Error: Error required internal CMake variable not set, cmake may not be built correctly.
+Missing variable is:
+CMAKE_test_COMPILER_ENV_VAR
+CMake Error: Error required internal CMake variable not set, cmake may not be built correctly.
+Missing variable is:
+CMAKE_test_COMPILER
+CMake Error: Could not find cmake module file: /home/nolv/Work/binary-message/test/cmake-build-debug/CMakeFiles/3.17.3/CMaketestCompiler.cmake
+CMake Error at CMakeLists.txt:1 (project):
+  No CMAKE_message_COMPILER could be found.
+
+  Tell CMake where to find the compiler by setting the CMake cache entry
+  CMAKE_message_COMPILER to the full path to the compiler, or to the compiler
+  name if it is in the PATH.
+
+
+CMake Error: Could not find cmake module file: CMakemessageInformation.cmake
+CMake Error at CMakeLists.txt:1 (project):
+  No CMAKE_test_COMPILER could be found.
+
+  Tell CMake where to find the compiler by setting the CMake cache entry
+  CMAKE_test_COMPILER to the full path to the compiler, or to the compiler
+  name if it is in the PATH.
+
+
+CMake Error: Could not find cmake module file: CMaketestInformation.cmake
+CMake Error: CMAKE_message_COMPILER not set, after EnableLanguage
+CMake Error: CMAKE_test_COMPILER not set, after EnableLanguage
+-- Configuring incomplete, errors occurred!
+See also "/home/nolv/Work/binary-message/test/cmake-build-debug/CMakeFiles/CMakeOutput.log".

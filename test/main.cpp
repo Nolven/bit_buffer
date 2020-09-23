@@ -1,3 +1,5 @@
+#include "BinaryMessage.h"
+
 
 int main()
 {

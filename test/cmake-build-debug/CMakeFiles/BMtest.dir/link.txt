@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/BMtest.dir/main.cpp.o CMakeFiles/BMtest.dir/home/nolv/Workspace/binary-message/BinaryMessage.cpp.o CMakeFiles/BMtest.dir/test.cpp.o  -o BMtest  lib/libgtestd.a lib/libgtest_maind.a lib/libgtestd.a -lpthread 

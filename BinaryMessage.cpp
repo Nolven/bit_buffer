@@ -17,3 +17,12 @@ BinaryMessage::BinaryMessage(size_t length) : _bitCounter(0), _data(length, 0)
 {
     return reinterpret_cast<char *>( _data.data() );
 }
+
+//TODO get rid of bitset
+//TODO add manipulator like std::hex
+std::ostream &operator<<(std::ostream &os, const BinaryMessage &msg)
+{
+    for(const auto & b : msg._data)
+        os << std::bitset<8>(b) << '\'';
+    return os;
+}

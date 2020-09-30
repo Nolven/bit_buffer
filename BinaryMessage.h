@@ -215,6 +215,8 @@ public:
         return dest.u;
     }
 
+    friend std::ostream& operator<<(std::ostream& os, const BinaryMessage& dt);
+
     std::vector<uint8_t> _data; ///< Actual data //TODO don't actually need vector, can be changed to uint8_t*
     size_t _bitCounter; ///< Last written bit
 };

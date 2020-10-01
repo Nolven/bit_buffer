@@ -23,29 +23,39 @@ public:
     template<typename T>
     size_t Insert(T value, size_t writeStart, size_t length)
     {
-        if( _leftmostSetBit(value) > length - 1 )
+        size_t leftMost = _leftmostSetBit(value);
+
+        // If passed value requires more bits then passed
+        if( leftMost > length )
             std::cout << "Warning, length is too small\n";
+
+        size_t valueStart = length;
+
+                //TODO debug
+                std::cout << "Value: " << std::bitset<sizeof(T)*8>(value) << '\n';
+                std::cout << "Length: " << length << '\n';
 
         size_t byte = writeStart / 8; ///< Byte in _data to write to
         size_t bitsLeftInByte = 8 - writeStart % 8; ///< bits left in current byte
-
         size_t bitsLeftToWrite = length; ///< remaining length
-        size_t valueStart = length;
 
         while (bitsLeftToWrite > bitsLeftInByte)
         {
-            _data[byte] |= _getBits(value, valueStart - bitsLeftInByte, bitsLeftInByte);
-
-            valueStart -= bitsLeftInByte;
+            valueStart -= bitsLeftInByte; // We count from right to left (cause bits)
+            _data[byte] |= _getBits(value, valueStart, bitsLeftInByte);
 
             writeStart += bitsLeftInByte;
-            byte = writeStart / 8;
-
             bitsLeftToWrite -= bitsLeftInByte;
+
+            ++byte;
             bitsLeftInByte = 8;
         }
 
-        _data[byte] |= _getBits(value, valueStart - bitsLeftToWrite, bitsLeftToWrite) << (bitsLeftInByte - valueStart);
+        _data[byte] |= _getBits(value, 0, bitsLeftToWrite) << (8 - bitsLeftToWrite);
+
+                //TODO debug
+                std::cout << *this << '\n';
+                std::cout << "========\n";
 
         return length;
     }

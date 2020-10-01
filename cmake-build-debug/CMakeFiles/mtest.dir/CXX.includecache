@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/nolv/Workspace/binary-message/BinaryMessage.h
+iostream
+-
+vector
+-
+bitset
+-
+cmath
+-
+
+/home/nolv/Workspace/binary-message/manualTest.cpp
+BinaryMessage.h
+/home/nolv/Workspace/binary-message/BinaryMessage.h
+

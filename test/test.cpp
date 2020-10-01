@@ -30,7 +30,7 @@ std::vector<std::pair<size_t, uint64_t>> generateValueLengthPairs(size_t length)
 
         // If `l` > 64, then we can generate any number of given type. Otherwise `l` would be the leftmost set bit
         // for upper bound. In other words we can generate any number [0, 2^l-1]
-        size_t upperLimit = (l > 64) ? std::numeric_limits<uint64_t>::max() : static_cast<size_t>(std::pow(2, l) - 1);
+        uint64_t upperLimit = (l > 64) ? std::numeric_limits<uint64_t>::max() : static_cast<uint64_t>(std::pow(2, l) - 1);
         std::uniform_int_distribution<uint64_t> vdist(0, upperLimit);
 
         uint64_t number = vdist(gen);

@@ -26,7 +26,7 @@ std::vector<std::pair<size_t, uint64_t>> generateValueLengthPairs(size_t length)
     while (length)
     {
         std::uniform_int_distribution<size_t> ldist(0, length);
-        size_t l = ldist(gen);
+        size_t l = ldist(gen) % 64;
 
         // If `l` > 64, then we can generate any number of given type. Otherwise `l` would be the leftmost set bit
         // for upper bound. In other words we can generate any number [0, 2^l-1]
@@ -57,7 +57,7 @@ TEST(Insert, integral)
     size_t counter = 0;
     for(auto & item : m)
     {
-        ASSERT_EQ(msg.Get<uint64_t>(counter, item.second), item.first);
+        EXPECT_EQ(msg.Get<uint64_t>(counter, item.second), item.first);
         counter += item.second;
     }
 

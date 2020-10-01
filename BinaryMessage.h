@@ -106,6 +106,10 @@ public:
     {
         T number{};
 
+        //Todo debug
+        std::cout << "Start: " << start;
+        std::cout << "; Length: " << length << '\n';
+
         size_t bitsToTake = length;
         size_t byte = start / 8;
 
@@ -116,10 +120,11 @@ public:
             number |= _getBits(_data[byte], 0, bitsLeftInByte);
 
             start += bitsLeftInByte;
-            byte = start / 8;
-
             bitsToTake -= bitsLeftInByte;
+
             bitsLeftInByte = 8;
+            ++byte;
+
             number <<= bitsToTake;
         }
 

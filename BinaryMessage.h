@@ -39,8 +39,11 @@ public:
         size_t bitsLeftInByte = 8 - writeStart % 8; ///< bits left in current byte
         size_t bitsLeftToWrite = length; ///< remaining length
 
+        bool first = true;
+
         while (bitsLeftToWrite > bitsLeftInByte)
         {
+            first = false;
             valueStart -= bitsLeftInByte; // We count from right to left (cause bits)
             _data[byte] |= _getBits(value, valueStart, bitsLeftInByte);
 
@@ -51,7 +54,9 @@ public:
             bitsLeftInByte = 8;
         }
 
-        _data[byte] |= _getBits(value, 0, bitsLeftToWrite) << (8 - bitsLeftToWrite);
+        size_t shift = 8 - (first ? 8 - bitsLeftInByte + bitsLeftToWrite : bitsLeftToWrite);
+
+        _data[byte] |= _getBits(value, 0, bitsLeftToWrite) << shift;
 
                 //TODO debug
                 std::cout << *this << '\n';
@@ -115,11 +120,10 @@ public:
 
         uint8_t bitsLeftInByte = 8u - (start % 8u);
 
-        while (bitsToTake > bitsLeftInByte)
+        while (bitsToTake >= bitsLeftInByte)
         {
             number |= _getBits(_data[byte], 0, bitsLeftInByte);
 
-            start += bitsLeftInByte;
             bitsToTake -= bitsLeftInByte;
 
             bitsLeftInByte = 8;
@@ -129,6 +133,10 @@ public:
         }
 
         number |= _getBits(_data[byte], 8 - bitsToTake, bitsToTake);
+
+        std::cout << std::bitset<sizeof(T)*8>(number) << '\n';
+
+        start += length;
 
         return number;
     }

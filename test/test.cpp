@@ -6,9 +6,10 @@
 #include <random>
 #include <chrono>
 
-std::vector<std::pair<size_t, uint64_t>> generateValueLengthPairs(size_t length)
+template<typename T>
+std::vector<std::pair<size_t, T>> generateValueLengthPairs(size_t length)
 {
-    std::vector<std::pair<size_t, uint64_t>> out;
+    std::vector<std::pair<size_t, T>> out;
 
     std::random_device rd;
     std::mt19937::result_type seed = rd() ^ (
@@ -26,16 +27,17 @@ std::vector<std::pair<size_t, uint64_t>> generateValueLengthPairs(size_t length)
     while (length)
     {
         std::uniform_int_distribution<size_t> ldist(0, length);
-        size_t l = ldist(gen) % 64;
+        size_t l = ldist(gen) % (sizeof(T) * 8);
 
         // If `l` > 64, then we can generate any number of given type. Otherwise `l` would be the leftmost set bit
         // for upper bound. In other words we can generate any number [0, 2^l-1]
-        uint64_t upperLimit = (l > 64) ? std::numeric_limits<uint64_t>::max() : static_cast<uint64_t>(std::pow(2, l) - 1);
-        std::uniform_int_distribution<uint64_t> vdist(0, upperLimit);
+        T upperLimit = static_cast<T>(std::pow(2, l) - 1);
+        std::uniform_int_distribution<T> vdist(0, upperLimit);
 
-        uint64_t number = vdist(gen);
+        T number = vdist(gen);
         length -= l;
 
+        std::cout << "Pushed: " << number << " ; " << l << '\n';
         out.emplace_back(number, l);
     }
 
@@ -44,9 +46,9 @@ std::vector<std::pair<size_t, uint64_t>> generateValueLengthPairs(size_t length)
 
 TEST(Insert, integral)
 {
-    auto m = generateValueLengthPairs(800);
-    BinaryMessage msg(800);
+    BinaryMessage msg(100);
 
+    auto m = generateValueLengthPairs<uint64_t>(100);
     for(auto & item : m)
     {
         msg.Append(item.first, item.second);
@@ -57,8 +59,24 @@ TEST(Insert, integral)
     size_t counter = 0;
     for(auto & item : m)
     {
-        EXPECT_EQ(msg.Get<uint64_t>(counter, item.second), item.first);
-        counter += item.second;
+        std::cout << "=========================TEST CASE=====================================\n";
+
+        std::cout << "Counter: " << counter << "; Length: " << item.second << '\n';
+        std::cout << "EXP: " << std::bitset<64>(item.first) << '\n';
+
+        auto result = msg.Get<uint64_t>(counter, item.second);
+        std::cout << "GOT: " << std::bitset<64>(result) << '\n';
+
+        if( result != item.first )
+        {
+            std::cout << "Pit stop\n";
+            result = msg.Get<uint64_t>(counter, item.second);
+        }
+
+        EXPECT_EQ(result, item.first);
+
+        std::cout << "=========================TEST CASE=====================================\n\n";
+
     }
 
 }

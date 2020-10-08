@@ -1,0 +1,1 @@
+/usr/bin/c++  -g  -rdynamic CMakeFiles/ManualTest.dir/main.o CMakeFiles/ManualTest.dir/BinaryMessage.o  -o ManualTest 

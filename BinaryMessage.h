@@ -10,6 +10,8 @@ class BinaryMessage
 {
 public:
     explicit BinaryMessage(size_t length);
+    BinaryMessage(uint8_t* data, size_t length) = delete; //TODO implement
+    BinaryMessage(std::vector<uint8_t> data) = delete; //TODO implement
     ~BinaryMessage() = default;
 
     /**
@@ -31,13 +33,11 @@ public:
 
         size_t valueStart = length;
 
-                //TODO debug
-                std::cout << "Value: " << std::bitset<sizeof(T)*8>(value) << '\n';
-                std::cout << "Length: " << length << '\n';
-
         size_t byte = writeStart / 8; ///< Byte in _data to write to
         size_t bitsLeftInByte = 8 - writeStart % 8; ///< bits left in current byte
         size_t bitsLeftToWrite = length; ///< remaining length
+
+        //TODO sizeof(T) < length leads to incorrect behaviour
 
         bool first = true;
 
@@ -58,10 +58,6 @@ public:
 
         _data[byte] |= _getBits(value, 0, bitsLeftToWrite) << shift;
 
-                //TODO debug
-                std::cout << *this << '\n';
-                std::cout << "========\n";
-
         return length;
     }
 
@@ -74,7 +70,7 @@ public:
     template<typename T>
     size_t Append(T value, size_t length)
     {
-        size_t pos = Insert(value, _bitCounter, length);
+        size_t pos = Insert<T>(value, _bitCounter, length);
         _bitCounter += length;
         return pos;
     }
@@ -111,37 +107,37 @@ public:
     {
         T number{};
 
-        //Todo debug
-        std::cout << "Start: " << start;
-        std::cout << "; Length: " << length << '\n';
-
         size_t bitsToTake = length;
         size_t byte = start / 8;
 
         uint8_t bitsLeftInByte = 8u - (start % 8u);
 
+        bool first = true;
+
         while (bitsToTake >= bitsLeftInByte)
         {
-            number |= _getBits(_data[byte], 0, bitsLeftInByte);
+            first = false;
+            T temp = _getBits(_data[byte], 0, bitsLeftInByte);
+            temp <<= bitsToTake - bitsLeftInByte;
+            number |= temp;
 
             bitsToTake -= bitsLeftInByte;
 
             bitsLeftInByte = 8;
             ++byte;
-
-            number <<= bitsToTake;
         }
 
-        number |= _getBits(_data[byte], 8 - bitsToTake, bitsToTake);
-
-        std::cout << std::bitset<sizeof(T)*8>(number) << '\n';
+        size_t shift = 8 - bitsToTake;
+        if( first )
+            shift += 8 - shift;
+        number |= _getBits(_data[byte], shift, bitsToTake);
 
         start += length;
 
         return number;
     }
 
-    /**
+    /**П
      * @return size Current size in bits
      */
     [[maybe_unused]] [[nodiscard]] size_t Size() const noexcept;

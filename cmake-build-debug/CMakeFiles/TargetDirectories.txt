@@ -1,3 +1,0 @@
-/home/nolv/Workspace/binary-message/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/nolv/Workspace/binary-message/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/nolv/Workspace/binary-message/cmake-build-debug/CMakeFiles/ManualTest.dir

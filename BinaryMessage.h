@@ -12,6 +12,9 @@ public:
     explicit BinaryMessage(size_t length);
     BinaryMessage(uint8_t* data, size_t length) = delete; //TODO implement
     BinaryMessage(std::vector<uint8_t> data) = delete; //TODO implement
+    BinaryMessage(const BinaryMessage& msg) = delete; //TODO implement
+    BinaryMessage(BinaryMessage&& msg) = delete; //TODO implement
+
     ~BinaryMessage() = default;
 
     /**
@@ -128,8 +131,9 @@ public:
         }
 
         size_t shift = 8 - bitsToTake;
-        if( first )
-            shift += 8 - shift;
+        if( first && (bitsLeftInByte != 8) )
+            shift -= 8 - bitsLeftInByte;
+
         number |= _getBits(_data[byte], shift, bitsToTake);
 
         start += length;

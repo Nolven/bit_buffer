@@ -1,7 +1,16 @@
 #include "BinaryMessage.h"
 
-BinaryMessage::BinaryMessage(size_t length) : _bitCounter(0), _data(length, 0)
-{}
+#include <utility>
+
+BinaryMessage::BinaryMessage(size_t length) : _bitCounter(0), _data(length, 0){}
+
+BinaryMessage::BinaryMessage(uint8_t *data, size_t length) : _data(data, data+length), _bitCounter(0){}
+
+BinaryMessage::BinaryMessage(std::vector<uint8_t> data) : _data(std::move(data)), _bitCounter(0){}
+
+BinaryMessage::BinaryMessage(const BinaryMessage &msg) = default;
+
+BinaryMessage::BinaryMessage(BinaryMessage &&msg) noexcept : _data(std::move(msg._data)), _bitCounter(msg._bitCounter){}
 
 [[maybe_unused]] uint8_t *BinaryMessage::Data() noexcept
 {
@@ -11,11 +20,6 @@ BinaryMessage::BinaryMessage(size_t length) : _bitCounter(0), _data(length, 0)
 [[maybe_unused]] size_t BinaryMessage::Size() const noexcept
 {
     return _bitCounter;
-}
-
-[[maybe_unused]] char *BinaryMessage::DataInChar()
-{
-    return reinterpret_cast<char *>( _data.data() );
 }
 
 //TODO get rid of bitset

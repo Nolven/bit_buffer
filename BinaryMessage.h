@@ -10,10 +10,10 @@ class BinaryMessage
 {
 public:
     explicit BinaryMessage(size_t length);
-    BinaryMessage(uint8_t* data, size_t length) = delete; //TODO implement
-    BinaryMessage(std::vector<uint8_t> data) = delete; //TODO implement
-    BinaryMessage(const BinaryMessage& msg) = delete; //TODO implement
-    BinaryMessage(BinaryMessage&& msg) = delete; //TODO implement
+    explicit BinaryMessage(std::vector<uint8_t>  data);
+    BinaryMessage(uint8_t* data, size_t length);
+    BinaryMessage(const BinaryMessage& msg);
+    BinaryMessage(BinaryMessage&& msg) noexcept ;
 
     ~BinaryMessage() = default;
 
@@ -30,7 +30,7 @@ public:
     {
         size_t leftMost = _leftmostSetBit(value);
 
-        // If passed value requires more bits then passed
+        // If passed value requires more bits
         if( leftMost > length )
             std::cout << "Warning, length is too small\n";
 
@@ -82,7 +82,6 @@ public:
      * @return uint_8t data
      */
     [[maybe_unused]] uint8_t* Data() noexcept;
-    [[maybe_unused]] char* DataInChar();
 
     /**
      * Get's value from array
@@ -173,9 +172,7 @@ public:
         size_t length = sizeof(T) - 1;
 
         while ( !_getByte(value, length) && length )
-        {
             --length;
-        }
 
         return _leftmostSetBit(_getByte(value, length)) + length * 8;
     }
@@ -215,33 +212,10 @@ public:
         return ((uint8_t*)(&value))[n];
     }
 
-    /**
-     * Swaps endiannes
-     * @tparam T Input type
-     * @param u value
-     * @return swapped number
-     */
-    template <typename T>
-    T _endSwap(T u)
-    {
-        union
-        {
-            T u;
-            unsigned char u8[sizeof(T)];
-        } source, dest;
-
-        source.u = u;
-
-        for (size_t k = 0; k < sizeof(T); k++)
-            dest.u8[k] = source.u8[sizeof(T) - k - 1];
-
-        return dest.u;
-    }
-
     friend std::ostream& operator<<(std::ostream& os, const BinaryMessage& dt);
 
     std::vector<uint8_t> _data; ///< Actual data //TODO don't actually need vector, can be changed to uint8_t*
-    size_t _bitCounter; ///< Last written bit
+    size_t _bitCounter{}; ///< Last written bit
 };
 
 template<>

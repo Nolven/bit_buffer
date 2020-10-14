@@ -10,7 +10,7 @@ class BinaryMessage
 {
 public:
     explicit BinaryMessage(size_t length);
-    explicit BinaryMessage(std::vector<uint8_t>  data);
+    explicit BinaryMessage(std::vector<uint8_t> data);
     BinaryMessage(uint8_t* data, size_t length);
     BinaryMessage(const BinaryMessage& msg);
     BinaryMessage(BinaryMessage&& msg) noexcept ;
@@ -28,38 +28,24 @@ public:
     template<typename T>
     size_t Insert(T value, size_t writeStart, size_t length)
     {
-        size_t leftMost = _leftmostSetBit(value);
-
         // If passed value requires more bits
-        if( leftMost > length )
-            std::cout << "Warning, length is too small\n";
+        if( _leftmostSetBit(value) > length )
+            return 0;
 
-        size_t valueStart = length;
-
-        size_t byte = writeStart / 8; ///< Byte in _data to write to
         size_t bitsLeftInByte = 8 - writeStart % 8; ///< bits left in current byte
-        size_t bitsLeftToWrite = length; ///< remaining length
-
-        //TODO sizeof(T) < length leads to incorrect behaviour
-
-        bool first = true;
+        size_t bitsLeftToWrite = length; ///< remaining length to write
 
         while (bitsLeftToWrite > bitsLeftInByte)
         {
-            first = false;
-            valueStart -= bitsLeftInByte; // We count from right to left (cause bits)
-            _data[byte] |= _getBits(value, valueStart, bitsLeftInByte);
+            bitsLeftToWrite -= bitsLeftInByte; // We count from right to left (cause bits)
+
+            _data[writeStart / 8] |= _getBits(value, bitsLeftToWrite, bitsLeftInByte);
 
             writeStart += bitsLeftInByte;
-            bitsLeftToWrite -= bitsLeftInByte;
-
-            ++byte;
             bitsLeftInByte = 8;
         }
 
-        size_t shift = 8 - (first ? 8 - bitsLeftInByte + bitsLeftToWrite : bitsLeftToWrite);
-
-        _data[byte] |= _getBits(value, 0, bitsLeftToWrite) << shift;
+        _data[writeStart / 8] |= _getBits(value, 0, bitsLeftToWrite) << (bitsLeftInByte - bitsLeftToWrite);
 
         return length;
     }
@@ -108,34 +94,26 @@ public:
     T Get(size_t& start, size_t length)
     {
         T number{};
-
-        size_t bitsToTake = length;
         size_t byte = start / 8;
 
         uint8_t bitsLeftInByte = 8u - (start % 8u);
 
-        bool first = true;
+        start += length;
 
-        while (bitsToTake >= bitsLeftInByte)
+        while (length >= bitsLeftInByte)
         {
-            first = false;
             T temp = _getBits(_data[byte], 0, bitsLeftInByte);
-            temp <<= bitsToTake - bitsLeftInByte;
+            temp <<= length - bitsLeftInByte;
             number |= temp;
 
-            bitsToTake -= bitsLeftInByte;
+            length -= bitsLeftInByte;
 
             bitsLeftInByte = 8;
             ++byte;
         }
 
-        size_t shift = 8 - bitsToTake;
-        if( first && (bitsLeftInByte != 8) )
-            shift -= 8 - bitsLeftInByte;
-
-        number |= _getBits(_data[byte], shift, bitsToTake);
-
-        start += length;
+        size_t shift = bitsLeftInByte - length;
+        number |= _getBits(_data[byte], shift, length);
 
         return number;
     }
@@ -156,7 +134,7 @@ public:
     template<typename T>
     inline static T _getBits(T value, size_t start, size_t quantity) noexcept
     {
-        T mask = (1u << quantity) - 1u;
+        unsigned long long mask = (1u << quantity) - 1u;
         return (value & (mask << start)) >> start;
     }
 

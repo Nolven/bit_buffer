@@ -64,6 +64,18 @@ public:
         return pos;
     }
 
+
+    size_t Resize(size_t bytes)
+    {
+        _data.resize(bytes);
+
+        // if new size is smaller than current
+        if ( bytes * 8 < _bitCounter )
+            bytes = 0;
+
+        return bytes;
+    }
+
     /**
      * @return uint_8t data
      */

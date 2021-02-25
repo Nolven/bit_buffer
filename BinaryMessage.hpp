@@ -1,21 +1,21 @@
-#ifndef RBC_GW_BINARYMESSAGE_H
-#define RBC_GW_BINARYMESSAGE_H
+#ifndef BINARY_BUFFER_H
+#define BINARY_BUFFER_H
 
 #include <iostream>
 #include <vector>
 #include <bitset>
 #include <cmath>
 
-class BinaryMessage
+class BinaryBuffer
 {
 public:
-    explicit BinaryMessage(size_t length);
-    explicit BinaryMessage(std::vector<uint8_t> data);
-    BinaryMessage(uint8_t* data, size_t length);
-    BinaryMessage(const BinaryMessage& msg);
-    BinaryMessage(BinaryMessage&& msg) noexcept ;
+    explicit BinaryBuffer(size_t length);
+    explicit BinaryBuffer(std::vector<uint8_t> data);
+    BinaryBuffer(uint8_t* data, size_t length);
+    BinaryBuffer(const BinaryBuffer& msg);
+    BinaryBuffer(BinaryBuffer&& msg) noexcept ;
 
-    ~BinaryMessage() = default;
+    ~BinaryBuffer() = default;
 
     /**
      * @tparam T Value type
@@ -26,7 +26,7 @@ public:
      * @return bits written
      */
     template<typename T>
-    size_t Insert(T value, size_t writeStart, size_t length)
+    size_t insert(T value, size_t writeStart, size_t length)
     {
         // If passed value requires more bits
         if( _leftmostSetBit(value) > length )
@@ -57,15 +57,15 @@ public:
      * @return number Added length
      */
     template<typename T>
-    size_t Append(T value, size_t length)
+    size_t append(T value, size_t length)
     {
-        size_t pos = Insert<T>(value, _bitCounter, length);
+        size_t pos = insert<T>(value, _bitCounter, length);
         _bitCounter += length;
         return pos;
     }
 
 
-    size_t Resize(size_t bytes)
+    size_t resize(size_t bytes)
     {
         _data.resize(bytes);
 
@@ -79,7 +79,7 @@ public:
     /**
      * @return uint_8t data
      */
-    [[maybe_unused]] uint8_t* Data() noexcept;
+    [[maybe_unused]] uint8_t* data() noexcept;
 
     /**
      * Get's value from array
@@ -89,10 +89,10 @@ public:
      * @return value
      */
     template<typename T>
-    T Get(const size_t& start, size_t length)
+    T get(const size_t& start, size_t length)
     {
         size_t buff = start;
-        return Get<T>(buff, length);
+        return get<T>(buff, length);
     }
 
     /**
@@ -103,7 +103,7 @@ public:
      * @return value
      */
     template<typename T>
-    T Get(size_t& start, size_t length)
+    T get(size_t& start, size_t length)
     {
         T number{};
         size_t byte = start / 8;
@@ -133,7 +133,7 @@ public:
     /**П
      * @return size Current size in bits
      */
-    [[maybe_unused]] [[nodiscard]] size_t Size() const noexcept;
+    [[maybe_unused]] [[nodiscard]] size_t size() const noexcept;
 
     /**
      * Get bits from value without shift (i.e. taken bits would be first)
@@ -202,14 +202,14 @@ public:
         return ((uint8_t*)(&value))[n];
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const BinaryMessage& dt);
+    friend std::ostream& operator<<(std::ostream& os, const BinaryBuffer& dt);
 
     std::vector<uint8_t> _data; ///< Actual data //TODO don't actually need vector, can be changed to uint8_t*
     size_t _bitCounter{}; ///< Last written bit
 };
 
 template<>
-inline size_t BinaryMessage::_leftmostSetBit<uint8_t>(uint8_t value) noexcept
+inline size_t BinaryBuffer::_leftmostSetBit<uint8_t>(uint8_t value) noexcept
 {
     size_t pos = 0;
     while (value >>= 1u)
@@ -218,4 +218,4 @@ inline size_t BinaryMessage::_leftmostSetBit<uint8_t>(uint8_t value) noexcept
     return pos;
 }
 
-#endif //RBC_GW_BINARYMESSAGE_H
+#endif

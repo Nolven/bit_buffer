@@ -12,7 +12,7 @@ enable_testing()
 
 # Units tests
 ##################################################################################
-add_executable(${PROJECT_NAME} main.cpp ${CMAKE_CURRENT_LIST_DIR}/../BinaryMessage.cpp test.cpp)
+add_executable(${PROJECT_NAME} main.cpp ${CMAKE_CURRENT_LIST_DIR}/../binaryBuffer.cpp test.cpp)
 target_link_libraries(${PROJECT_NAME}  gtest gtest_main)
 
 add_test( ${PROJECT_NAME} test.cpp )

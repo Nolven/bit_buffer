@@ -9,11 +9,11 @@
 class BinaryBuffer
 {
 public:
-    explicit BinaryBuffer(size_t length);
-    explicit BinaryBuffer(std::vector<uint8_t> data);
-    BinaryBuffer(uint8_t* data, size_t length);
-    BinaryBuffer(const BinaryBuffer& msg);
-    BinaryBuffer(BinaryBuffer&& msg) noexcept ;
+    explicit BinaryBuffer(size_t length) : _bitCounter(0), _data(length, 0){}
+    explicit BinaryBuffer(std::vector<uint8_t> data) : _data(std::move(data)), _bitCounter(0){}
+    BinaryBuffer(uint8_t *data, size_t length) : _data(data, data + length), _bitCounter(0){}
+    BinaryBuffer(const BinaryBuffer &msg) = default;
+    BinaryBuffer(BinaryBuffer &&msg) noexcept : _data(std::move(msg._data)), _bitCounter(msg._bitCounter){}
 
     ~BinaryBuffer() = default;
 
@@ -77,9 +77,14 @@ public:
     }
 
     /**
-     * @return uint_8t data
+     * @return uint_8t* data
      */
-    [[maybe_unused]] uint8_t* data() noexcept;
+    [[maybe_unused]] uint8_t* data() noexcept{return _data.data();};
+
+    /**
+     * @return const uint_8t* data
+     */
+    [[maybe_unused]] const uint8_t* cdata() noexcept{return _data.data();};
 
     /**
      * Get's value from array
@@ -133,7 +138,7 @@ public:
     /**П
      * @return size Current size in bits
      */
-    [[maybe_unused]] [[nodiscard]] size_t size() const noexcept;
+    [[maybe_unused]] [[nodiscard]] size_t size() const noexcept{ return _bitCounter; };
 
     /**
      * Get bits from value without shift (i.e. taken bits would be first)
@@ -202,7 +207,7 @@ public:
         return ((uint8_t*)(&value))[n];
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const BinaryBuffer& dt);
+    friend std::ostream& operator<<(std::ostream& os, const BinaryBuffer& msg);
 
     std::vector<uint8_t> _data; ///< Actual data //TODO don't actually need vector, can be changed to uint8_t*
     size_t _bitCounter{}; ///< Last written bit
@@ -216,6 +221,13 @@ inline size_t BinaryBuffer::_leftmostSetBit<uint8_t>(uint8_t value) noexcept
         pos++;
 
     return pos;
+}
+
+std::ostream &operator<<(std::ostream &os, const BinaryBuffer &msg)
+{
+    for(const auto & b : msg._data)
+        os << std::bitset<8>(b) << '\'';
+    return os;
 }
 
 #endif

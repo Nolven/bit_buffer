@@ -9,6 +9,10 @@
 class BinaryBuffer
 {
 public:
+    /**
+     * Basic constructor
+     * @param length
+     */
     explicit BinaryBuffer(size_t length) : _bitCounter(0), _data(length, 0){}
     explicit BinaryBuffer(std::vector<uint8_t> data) : _data(std::move(data)), _bitCounter(0){}
     BinaryBuffer(uint8_t *data, size_t length) : _data(data, data + length), _bitCounter(0){}
@@ -209,7 +213,7 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const BinaryBuffer& msg);
 
-    std::vector<uint8_t> _data; ///< Actual data //TODO don't actually need vector, can be changed to uint8_t*
+    std::vector<uint8_t> _data{}; ///< Actual data //TODO don't actually need vector, can be changed to uint8_t*
     size_t _bitCounter{}; ///< Last written bit
 };
 

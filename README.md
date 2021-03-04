@@ -15,7 +15,7 @@ Simple, right? Let's add another value:
     buff.append(5, 3);
 ```
 The resulting buffer is:  
-`v--3---v'v5v`
+`v--3---v'v5v`  
 `00000101'11100000'00000000'00000000'00000000`  
 By calling append with the length of 3 we wrote only meaningful bits into the buffer.  
 So when we are going to read from it, we will simply call:

@@ -6,7 +6,7 @@ they are stored in sequence without trailing 0, for example we can create a simp
     BinaryBuffer buff(5);
     buff.append(3, 8);
 ```
-After it the buffer would look like (`'` stands for the end of a byte):
+After it the buffer would look like (`'` stands for the end of a byte):  
 `v------v - 3 is stored there`  
 `00000101'00000000'00000000'00000000'00000000`
 

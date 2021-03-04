@@ -24,7 +24,7 @@ So when we are going to read from it, we will simply call:
 ```
 output bits will be interpreted as `00000111`
 
-# Example
+# Example //so useful much wow
 
 For example you have some internal DTO like one below:
 

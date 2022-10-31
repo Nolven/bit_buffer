@@ -3,7 +3,7 @@
 Basically it's a bit buffer without padding. By this i mean that when we sequentially write values, 
 they are stored in sequence without trailing 0, for example we can create a simple buffer and store 3 at first 8 bits:
 ```c++
-    BinaryBuffer buff(5);
+    BitBuffer buff(5);
     buff.append(3, 8);
 ```
 After it the buffer would look like (`'` stands for the end of a byte):  
@@ -54,7 +54,7 @@ that must be transfered using binary UDP protocol like:
 So you need to package all these values without padding to one package.  
 The easiest way to do it is just append values one by one:
 ```c++
-    BinaryBuffer buff(6);
+    BitBuffer buff(6);
 
     buff.append<int8_t>(dto.counter, 3);
     buff.append<int8_t>(dto.state, 3);
